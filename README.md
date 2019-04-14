@@ -1,0 +1,2 @@
+# merge-bot
+Merge bot
