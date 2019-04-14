@@ -40,7 +40,7 @@ const handlePullRequestEvents = async (tools: any) => {
 
 tools.log.info(JSON.stringify(tools.context));
 
-switch (tools.context.event) {
+switch (tools.context.payload.action) {
   case "published":
     handleReleaseEvents(tools);
     break;
