@@ -1,0 +1,11 @@
+{
+  "name": "merge-bot",
+  "version": "1.0.0",
+  "description": "Auto-merge GitHub pull requests",
+  "main": "index.js",
+  "author": "Puneeth Nanjundaswamy",
+  "license": "MIT",
+  "dependencies": {
+    "actions-toolkit": "^2.0.0"
+  }
+}
