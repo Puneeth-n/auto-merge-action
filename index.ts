@@ -27,7 +27,11 @@ const handleReleaseEvents = async (tools: any) => {
 
   const pulls = await tools.github.pulls.list({
     owner: context.owner,
-    repo: context.repo
+    repo: context.repo,
+    state: 'open',
+    base: baseBranch,
+    sort: 'updated',
+    per_page: 100
   });
 
   tools.log.info(JSON.stringify(pulls));
