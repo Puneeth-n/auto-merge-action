@@ -35,6 +35,7 @@ const handlePullRequestEvents = async (tools: Toolkit) => {
   tools.log.info(JSON.stringify(tools.context));
 }
 
+tools.log.info(JSON.stringify(tools.context));
 
 switch (tools.context.payload.action) {
   case "published":
