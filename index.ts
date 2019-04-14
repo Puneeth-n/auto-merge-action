@@ -1,4 +1,5 @@
 import { Toolkit } from 'actions-toolkit';
+// import * as Octokit from '@octokit/rest';
 
 const tools = new Toolkit({
   event: ['pull_request', 'release']
@@ -18,26 +19,28 @@ if (!baseBranch) {
 }
 
 
-const handleReleaseEvents = async (tools: Toolkit) => {
+const handleReleaseEvents = async (tools: any) => {
   tools.log.info('Handling GitHub release event');
   tools.log.info(JSON.stringify(tools.context));
 
-  // const context = tools.context.repo;
+  const context = tools.context.repo;
 
-//   const pulls = await tools.github.pulls.list({
-//     owner: context.owner,
-//     repo: context.repo
-//   });
+  const pulls = await tools.github.pulls.list({
+    owner: context.owner,
+    repo: context.repo
+  });
+
+  tools.log.info(JSON.stringify(pulls));
 }
 
-const handlePullRequestEvents = async (tools: Toolkit) => {
+const handlePullRequestEvents = async (tools: any) => {
   tools.log.info('Handling GitHub pull request event');
   tools.log.info(JSON.stringify(tools.context));
 }
 
 tools.log.info(JSON.stringify(tools.context));
 
-switch (tools.context.payload.action) {
+switch (tools.context.event) {
   case "published":
     handleReleaseEvents(tools);
     break;
