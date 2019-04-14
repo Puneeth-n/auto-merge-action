@@ -10,11 +10,16 @@
     "lodash": "^4.17.11"
   },
   "scripts": {
-    "build": "rm -rf dist && tsc -p ./tsconfig.json"
+    "build": "rm -rf dist && tsc -p ./tsconfig.json",
+    "lint": "tslint -p ./tsconfig.json *.ts",
+    "prettier": "prettier -w '*.ts'"
   },
   "devDependencies": {
     "@octokit/rest": "^16.24.1",
     "@types/node": "^11.13.4",
+    "prettier": "^1.17.0",
+    "tslint": "^5.15.0",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.4.3"
   }
 }

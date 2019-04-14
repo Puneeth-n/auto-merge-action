@@ -1,7 +1,7 @@
 import { Toolkit } from 'actions-toolkit';
 // import * as Octokit from '@octokit/rest';
 
-const tools = new Toolkit({
+const toolkit = new Toolkit({
   event: ['pull_request', 'release']
 });
 
@@ -11,11 +11,11 @@ const baseBranch: string = process.env.BASE_BRANCH!;
 
 
 if (!okToMergeLabel) {
-  tools.exit.failure('Please set environment variable OK_TO_MERGE_LABEL');
+  toolkit.exit.failure('Please set environment variable OK_TO_MERGE_LABEL');
 }
 
 if (!baseBranch) {
-  tools.exit.failure('Please set environment variable BASE_BRANCH');
+  toolkit.exit.failure('Please set environment variable BASE_BRANCH');
 }
 
 
@@ -25,13 +25,13 @@ const handleReleaseEvents = async (tools: any) => {
 
   const context = tools.context.repo;
 
-  const pulls = await tools.github.pulls.list({
-    owner: context.owner,
-    repo: context.repo,
-    state: 'open',
-    base: baseBranch,
+  const pulls = await tools.github.pulls.list({base: baseBranch,
+
+                                              owner: context.owner,
+                                              per_page: 100,
+                                              repo: context.repo,
     sort: 'updated',
-    per_page: 100
+    state: 'open'
   });
 
   tools.log.info(JSON.stringify(pulls));
@@ -42,19 +42,19 @@ const handlePullRequestEvents = async (tools: any) => {
   tools.log.info(JSON.stringify(tools.context));
 }
 
-tools.log.info(JSON.stringify(tools.context));
+toolkit.log.info(JSON.stringify(toolkit.context));
 
-switch (tools.context.payload.action) {
+switch (toolkit.context.payload.action) {
   case "published":
-    handleReleaseEvents(tools);
+    handleReleaseEvents(toolkit);
     break;
 
   case "labeled":
   case "synchronize":
-    handlePullRequestEvents(tools);
+    handlePullRequestEvents(toolkit);
     break;
 
   default:
-    tools.exit.success('Nothing to handle');
+  toolkit.exit.success('Nothing to handle');
     break;
 }
