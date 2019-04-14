@@ -6,4 +6,4 @@ build:
 	@docker build -t $(DOCKER_IMAGE_NAME) .
 
 develop:
-	@docker run --rm -it -v $(PWD):/opt/bot -w /opt/bot $(DOCKER_IMAGE_NAME) sh
+	@docker run --rm -it -v $(PWD):/opt/bot -w /opt/bot --entrypoint sh $(DOCKER_IMAGE_NAME)

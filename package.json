@@ -1,17 +1,20 @@
 {
-  "name": "merge-bot",
+  "name": "auto-merge-action",
   "version": "1.0.0",
   "description": "Auto-merge GitHub pull requests",
   "main": "index.js",
   "author": "Puneeth Nanjundaswamy",
   "license": "MIT",
   "dependencies": {
-    "actions-toolkit": "^2.0.0"
+    "@types/node": "^11.13.4",
+    "actions-toolkit": "^2.0.0",
+    "lodash": "^4.17.11"
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p ./tsconfig.json"
   },
   "devDependencies": {
+    "@octokit/rest": "^16.24.1",
     "typescript": "^3.4.3"
   }
 }
