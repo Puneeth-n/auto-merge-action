@@ -2,7 +2,7 @@ import { Toolkit } from 'actions-toolkit';
 // import * as Octokit from '@octokit/rest';
 
 const toolkit = new Toolkit({
-  event: ['pull_request', 'release']
+  event: ['pull_request', 'release', 'check_run']
 });
 
 const okToMergeLabel: string = process.env.OK_TO_MERGE_LABEL!;
@@ -25,11 +25,11 @@ const handleReleaseEvents = async (tools: any) => {
 
   const context = tools.context.repo;
 
-  const pulls = await tools.github.pulls.list({base: baseBranch,
-
-                                              owner: context.owner,
-                                              per_page: 100,
-                                              repo: context.repo,
+  const pulls = await tools.github.pulls.list({
+    base: baseBranch,
+    owner: context.owner,
+    per_page: 100,
+    repo: context.repo,
     sort: 'updated',
     state: 'open'
   });
