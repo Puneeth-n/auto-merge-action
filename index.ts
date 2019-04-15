@@ -2,7 +2,7 @@ import { Toolkit } from 'actions-toolkit';
 // import * as Octokit from '@octokit/rest';
 
 const toolkit = new Toolkit({
-  event: ['pull_request', 'release', 'check_run']
+  event: ['pull_request', 'release', 'check_run.completed']
 });
 
 const okToMergeLabel: string = process.env.OK_TO_MERGE_LABEL!;
