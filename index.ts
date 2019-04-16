@@ -1,5 +1,5 @@
+import * as Octokit from '@octokit/rest'
 import { Toolkit } from 'actions-toolkit';
-// import * as Octokit from '@octokit/rest';
 
 const toolkit = new Toolkit({
   event: ['pull_request', 'release', 'check_run.completed']
@@ -19,13 +19,15 @@ if (!baseBranch) {
 }
 
 
-const handleReleaseEvents = async (tools: any) => {
+const handleReleaseEvents = async (tools: Toolkit) => {
   tools.log.info('Handling GitHub release event');
   tools.log.info(JSON.stringify(tools.context));
 
   const context = tools.context.repo;
 
-  const pulls = await tools.github.pulls.list({
+  const octokit = tools.github as Octokit;
+
+  const pulls = await octokit.pulls.list({
     base: baseBranch,
     owner: context.owner,
     per_page: 100,
@@ -37,12 +39,12 @@ const handleReleaseEvents = async (tools: any) => {
   tools.log.info(JSON.stringify(pulls));
 }
 
-const handlePullRequestEvents = async (tools: any) => {
+const handlePullRequestEvents = async (tools: Toolkit) => {
   tools.log.info('Handling GitHub pull request event');
   tools.log.info(JSON.stringify(tools.context));
 }
 
-const handleCheckRunEvents = async (tools: any) => {
+const handleCheckRunEvents = async (tools: Toolkit) => {
   tools.log.info('Handling GitHub check_run event');
   tools.log.info(tools.context);
 }
