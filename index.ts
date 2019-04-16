@@ -77,6 +77,7 @@ const getPullRequest = async (pullRequestNumber: number, tries:number = 0): Prom
   const mergable = pullRequestResponse.data.mergeable;
 
   if (mergable === null) {
+    toolkit.log.info('Waiting to fetch mergeable status');
     await wait(waitMs);
     tries++;
     return getPullRequest(pullRequestNumber, tries);
