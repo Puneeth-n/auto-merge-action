@@ -60,30 +60,30 @@ const filterPullRequestsByLabel = (allPullRequests: Octokit.Response<Octokit.Pul
   return false;
 })
 
-const getPullRequest = async (pullRequestNumber: number, tries:number = 0): Promise<Octokit.Response<Octokit.PullsGetResponse>> => {
-
-  if (tries > maxRetries) {
-    throw new Error(`Error fetching pull request number: ${pullRequestNumber}`);
-  }
+const getPullRequest = async (pullRequestNumber: number): Promise<Octokit.Response<Octokit.PullsGetResponse>> => {
 
   const repo = toolkit.context.repo;
+  let mergable = null;
+  let tries: number = 0;
 
-  const pullRequestResponse =  await octokit.pulls.get({
-    owner:repo.owner,
-    pull_number: pullRequestNumber,
-    repo: repo.repo
-  });
+  while (mergable === null || tries < maxRetries) {
+    const pullRequestResponse =  await octokit.pulls.get({
+      owner:repo.owner,
+      pull_number: pullRequestNumber,
+      repo: repo.repo
+    });
 
-  const mergable = pullRequestResponse.data.mergeable;
+    mergable = pullRequestResponse.data.mergeable;
 
-  if (mergable === null) {
-    toolkit.log.info('Waiting to fetch mergeable status');
-    await wait(waitMs);
-    tries++;
-    return getPullRequest(pullRequestNumber, tries);
+    if (mergable === null) {
+      toolkit.log.info('Waiting to fetch mergeable status');
+      await wait(waitMs);
+      tries++;
+    } else {
+      return pullRequestResponse
+    }
   }
-
-  return pullRequestResponse
+  throw new Error(`Error fetching pull request number: ${pullRequestNumber}`);
 }
 
 const getMergablePullRequests = (pullRequests: Array<Octokit.Response<Octokit.PullsGetResponse>>) => {
