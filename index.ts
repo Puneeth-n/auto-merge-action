@@ -86,6 +86,47 @@ const getPullRequest = async (pullRequestNumber: number, tries:number = 0): Prom
   return pullRequestResponse
 }
 
+const getMergablePullRequests = (pullRequests: Array<Octokit.Response<Octokit.PullsGetResponse>>) => {
+
+  return pullRequests.filter((pullRequest) => {
+    return pullRequest.data.mergeable === true && pullRequest.data.mergeable_state === 'clean'
+  })
+}
+
+const getMergablePullRequestsBehindBaseBranch = (pullRequests: Array<Octokit.Response<Octokit.PullsGetResponse>>) => {
+
+  return pullRequests.filter((pullRequest) => {
+    return pullRequest.data.mergeable === true && pullRequest.data.mergeable_state === 'clean'
+  })
+}
+
+
+const mergePullRequest = (pullRequest: Octokit.Response<Octokit.PullsGetResponse>) => {
+  const repo = toolkit.context.repo;
+
+  // todo parameterize squash
+  toolkit.log.info(`Merging pull request number: ${pullRequest.data.number} to ${baseBranch}`);
+  return octokit.pulls.merge({
+    merge_method: 'squash',
+    owner: repo.owner,
+    pull_number: pullRequest.data.number,
+    repo: repo.repo
+  })
+}
+
+
+const updatePullRequest = (pullRequest: Octokit.Response<Octokit.PullsGetResponse>) => {
+  const repo = toolkit.context.repo;
+
+  // todo parameterize squash
+  toolkit.log.info(`Merging ${baseBranch} into  pull request number: ${pullRequest.data.number}`);
+  return octokit.repos.merge({
+    base: pullRequest.data.head.label,
+    head: baseBranch,
+    owner: repo.owner,
+    repo: repo.repo
+  })
+}
 
 const handleReleaseEvents = async (): Promise<void> => {
   toolkit.log.info('Handling GitHub release event');
@@ -107,8 +148,25 @@ const handleReleaseEvents = async (): Promise<void> => {
 
     try {
       const pullRequests = await Promise.all(promises);
-      toolkit.log.info(pullRequests)
-      toolkit.exit.success('success');
+
+      const mergablePullRequests = getMergablePullRequests(pullRequests);
+      const updatablePullRequests = getMergablePullRequestsBehindBaseBranch(pullRequests);
+
+      if (mergablePullRequests.length > 1) {
+        await mergePullRequest(mergablePullRequests[0])
+        await updatePullRequest(mergablePullRequests[1])
+        toolkit.exit.success('Done!!!');
+      }
+
+      if (mergablePullRequests.length === 1) {
+        await mergePullRequest(mergablePullRequests[0])
+      }
+
+      if (updatablePullRequests.length >= 1) {
+        await updatePullRequest(updatablePullRequests[0])
+      }
+
+      toolkit.exit.success('Done!!!');
     } catch(error) {
       toolkit.exit.failure(`Error processing pullRequests ${error}`);
     }
