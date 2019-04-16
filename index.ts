@@ -42,16 +42,23 @@ const handlePullRequestEvents = async (tools: any) => {
   tools.log.info(JSON.stringify(tools.context));
 }
 
-toolkit.log.info(JSON.stringify(toolkit.context));
+const handleCheckRunEvents = async (tools: any) => {
+  tools.log.info('Handling GitHub check_run event');
+  tools.log.info(tools.context);
+}
 
-switch (toolkit.context.payload.action) {
-  case "published":
+
+switch (toolkit.context.event) {
+  case "release":
     handleReleaseEvents(toolkit);
     break;
 
   case "labeled":
-  case "synchronize":
     handlePullRequestEvents(toolkit);
+    break;
+
+  case "check_run":
+    handleCheckRunEvents(toolkit);
     break;
 
   default:
