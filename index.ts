@@ -121,7 +121,7 @@ const updatePullRequest = (pullRequest: Octokit.Response<Octokit.PullsGetRespons
   // todo parameterize squash
   toolkit.log.info(`Merging ${baseBranch} into  pull request number: ${pullRequest.data.number}`);
   return octokit.repos.merge({
-    base: pullRequest.data.head.label,
+    base: pullRequest.data.head.ref,
     head: baseBranch,
     owner: repo.owner,
     repo: repo.repo
